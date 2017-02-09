@@ -1,23 +1,29 @@
 
-FROM php:5.6-fpm
+FROM php:7.0-apache
 
-RUN apt-get update -y && \
-    apt-get install -y \
-        curl \
-        wget \
+RUN apt-get update && apt-get install -y \
         libfreetype6-dev \
         libjpeg62-turbo-dev \
         libmcrypt-dev \
-        libpng12-dev git net-tools mariadb-client libcurl4-gnutls-dev \
-    && docker-php-ext-install -j$(nproc) iconv mcrypt \
+        libpng12-dev \
+        libbz2-dev \
+        libicu-dev \
+        curl \
+        dialog \
+        git \
+        vim \
+        tree \
+        libpq-dev \
     && docker-php-ext-configure gd --with-freetype-dir=/usr/include/ --with-jpeg-dir=/usr/include/ \
-    && docker-php-ext-install -j$(nproc) gd \
-    && docker-php-ext-install mbstring opcache pdo pdo_mysql curl zip \
-    && cd /usr/local/bin \
-    && php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" \
-    && php -r "if (hash_file('SHA384', 'composer-setup.php') === 'e115a8dc7871f15d853148a7fbac7da27d6c0030b848d9b3dc09e2a0388afed865e6a3d6b3c0fad45c48e2b5fc1196ae') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" \
-    && php composer-setup.php \
-    && php -r "unlink('composer-setup.php');" \
-    && mv composer.phar composer
+    && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
+    && docker-php-ext-install gd opcache mbstring pdo pdo_pgsql pgsql zip bz2 iconv mcrypt \
+    && curl -sS https://getcomposer.org/installer | php && mv composer.phar /usr/local/bin/composer \
+    && cd /usr/local/bin && curl https://drupalconsole.com/installer -L -o drupal.phar && mv drupal.phar drupal && chmod +x drupal \
+    && yes | pecl install xdebug \
+    && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/xdebug.ini \
+    && a2enmod headers && a2enmod rewrite
 
+ADD ./resources/config/devops.dev.conf /etc/apache2/sites-enabled/
 ADD ./resources/config/php.ini /usr/local/etc/php/
