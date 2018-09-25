@@ -30,6 +30,6 @@ RUN apt-get update && apt-get install -y \
 RUN docker-php-ext-install mysqli pdo_mysql
 RUN apt-get install mariadb-client -y
 
-ADD ./php.ini /usr/local/etc/php/
+ADD ./resources/config/php.ini /usr/local/etc/php/	
 
 RUN useradd -m web
