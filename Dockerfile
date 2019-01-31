@@ -22,7 +22,7 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-configure pgsql -with-pgsql=/usr/local/pgsql \
     && docker-php-ext-install bcmath mysqli pdo_mysql gd opcache mbstring pdo pdo_pgsql pgsql zip bz2 iconv
 
-RUN yes | pecl install xdebug-2.7.0beta1 \
+RUN yes | pecl install xdebug \
     && echo "zend_extension=$(find /usr/local/lib/php/extensions/ -name xdebug.so)" > /usr/local/etc/php/conf.d/xdebug.ini \
     && echo "xdebug.remote_enable=on" >> /usr/local/etc/php/conf.d/xdebug.ini \
     && echo "xdebug.remote_autostart=off" >> /usr/local/etc/php/conf.d/xdebug.ini \
