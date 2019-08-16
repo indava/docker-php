@@ -1,0 +1,15 @@
+<VirtualHost *:80>
+  {{ $web := getenv "WEB_ROOT" "web" }}
+
+  DocumentRoot /var/www/html/{{ $web }}
+  RewriteEngine On
+
+  <Directory /var/www/html/{{ $web }}>
+    AllowOverride All
+    order allow,deny
+    allow from all
+
+    FallbackResource /index.php
+  </Directory>
+
+</VirtualHost>

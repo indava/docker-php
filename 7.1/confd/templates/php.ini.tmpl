@@ -1,0 +1,39 @@
+[PHP]
+
+date.timezone={{ getenv "PHP_TIMEZONE" "America/Mexico_City"}}
+
+memory_limit={{ getenv "PHP_MEMORY" "512M"}}
+max_input_vars=2000
+
+upload_max_filesize=20M
+post_max_size=20M
+
+log_errors = On
+
+{{ $xdebug := getenv "APP_ENV" "prod" }}
+{{ if eq $xdebug "dev" }}
+
+display_errors=On
+error_reporting = E_ALL
+display_startup_errors = On
+
+log_errors_max_len = 1024
+ignore_repeated_errors = Off
+ignore_repeated_source = Off
+report_memleaks = On
+html_errors = On
+
+zend_extension=/usr/local/lib/php/extensions/no-debug-non-zts-20151012/xdebug.so
+xdebug.coverage_enable=0
+xdebug.default_enable=1
+xdebug.remote_enable=1
+xdebug.remote_connect_back=1
+xdebug.remote_port=9000
+xdebug.remote_handler=dbgp
+xdebug.remote_autostart=true
+xdebug.idekey="DEV"
+xdebug.max_nesting_level=256
+{{ else }}
+display_errors=Off
+error_reporting = E_ALL & ~E_DEPRECATED & ~E_STRICT
+{{ end }}
