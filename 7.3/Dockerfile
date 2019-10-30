@@ -14,7 +14,7 @@ RUN apt-get update && apt-get install -y \
         libxrender1 \
 	dialog \
         git \
-        vim \
+        vim unzip \
         tree \
         libpq-dev \
 	mariadb-client \
